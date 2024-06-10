@@ -37,7 +37,7 @@ saveRDS(ngram, sprintf('%s/ngram_result.rds', dir$rdsdir))
 
 ## ||||||||||||||||||||||||||||||||||||||||| ##
 ## -- document Term
-docMatrix_res <- docMatrix("01_output/Table", pos = c("名詞"), 
+docMatrix_res <- docMatrix("01_output/Table", pos = c("サ変","名詞"), 
                     minFreq = 10)
 docmat <- t(as(docMatrix_res,"matrix"))
 
