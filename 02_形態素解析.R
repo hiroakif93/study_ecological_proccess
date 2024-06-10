@@ -2,6 +2,7 @@
 ## ||||||||||||||||||||||||||||||||||||||||| ##
 
 ## -- RMeCab :　テキストマイニング用のパッケージ
+library(AnalysisHelper)
 library(RMeCab)
 
 library(ggbiplot)
@@ -40,7 +41,6 @@ saveRDS(ngram, sprintf('%s/ngram_result.rds', dir$rdsdir))
 docMatrix_res <- docMatrix("01_output/Table", pos = c("サ変","名詞"), 
                     minFreq = 10)
 docmat <- t(as(docMatrix_res,"matrix"))
-
 saveRDS(docmat, sprintf('%s/docMatrix_result.rds', dir$rdsdir))
 
 ## ||||||||||||||||||||||||||||||||||||||||| ##

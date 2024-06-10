@@ -1,6 +1,6 @@
 
 ## ||||||||||||||||||||||||||||||||||||||||| ##
-# install.packages(c('RMeCab', 'cowplot', 'ggbiplot'))
+# install.packages(c('extrafont', 'cowplot', 'ggbiplot'))
 # remotes::install_github("IshidaMotohiro/RMeCab")
 #install.packages("RMeCab", repos = "http://rmecab.jp/R") 
 
@@ -22,10 +22,11 @@ docMat_res <- readRDS('02_output/RDS/docMatrix_result.rds')
 
 ## -- 割合に変換
 docmat <- docMat_res/rowSums(docMat_res)
-
+colnames(docmat)
 ## -- 2年以上でてきたかつ全ての年に出ていない単語を選択
-docmat <- (docmat[,colSums(docmat>0)>1 & colSums(docmat>0) < nrow(docmat)])
-docmat <- docmat[,-grep('，', colnames(docmat))]
+docmat <- (docmat[,colSums(docmat>0)>1])
+docmat <- docmat[,-grep('，', colnames(docmat))][,-c(1:50)]
+
 
 ## ||||||||||||||||||||||||||||||||||||||||| ##
 ## -- 主成分分析
@@ -39,6 +40,8 @@ ggbiplot(pcobj = pca, choices = 1:2, obs.scale = 1, var.scale = 1)
 
 ## -- PC1 の寄与率
 head(pca$rotation[ order(pca$rotation[,1], decreasing=TRUE),1:2], n=30)
+
+tail(pca$rotation[ order(pca$rotation[,1], decreasing=TRUE),1:2], n=30)
 
 ## -- プラス方向へのPC２寄与率
 head(pca$rotation[ order(pca$rotation[,2], decreasing=TRUE),1:2], n=30)
@@ -100,12 +103,14 @@ library(grid)
 library(purrr)
 
 stopifnot(length(choices) == 2)
+
+topn = 10
 if (inherits(pcobj, "prcomp")) {
   nobs.factor <- sqrt(nrow(pcobj$x) - 1)
   d <- pcobj$sdev
   u <- sweep(pcobj$x, 2, 1/(d * nobs.factor), FUN = "*")
   v <- pcobj$rotation
-  top5 = \(x) c(order(x)[1:5], order(x, decreasing = TRUE)[1:5])
+  top5 = \(x) c(order(x)[1:topn], order(x, decreasing = TRUE)[1:topn])
   rowid = apply(v[,1:2], 2, top5) |> as.vector() |> unique()
   v = v[rowid,]
   
@@ -148,8 +153,13 @@ g <- g + geom_segment(data = df.v,
                       aes(x = 0, y = 0,
                           xend = xvar, yend = yvar), 
                       arrow = arrow(length = unit(1/2,"picas")), color = muted("red"))+ 
+  geom_line(linetype=3)+
   geom_text(aes(label = labels, color = groups), size = labels.size)
 
-g + geom_text(data = df.v, aes(label = varname, 
+(g + geom_text(data = df.v, aes(label = varname, 
                                x = xvar, y = yvar, angle = angle, hjust = hjust), 
-              color = "darkred", size = varname.size)
+              color = "darkred", size = varname.size) + 
+    theme_bw(base_family = 'sans')
+  )|>
+  ggsave(filename='test_pca.pdf', family = "Japan1", w=10, h=10)
+

@@ -38,6 +38,6 @@ cp user_dic.dic /usr/local/lib/mecab/dic/user_dic
 # /usr/local/libexec/mecab/mecab-dict-index -f utf8 -t utf8 mydic2.csv 
  
 
-echo "userdic = /Users/hiroakifujita/Desktop/学会、研究会/2303xx_生態学会69/R/mecab_user_dic/user_dic.dic" >> /usr/local/etc/mecabrc
+echo "userdic = /Users/hiroakifujita/works/Wada_Mito_etal/mecab_user_dic/user_dic.dic" >> /usr/local/etc/mecabrc
 echo "userdic = /Users/hiroakifujita/Desktop/学会、研究会/2303xx_生態学会69/R/mecab_user_dic/user_dic2.dic" >> /usr/local/etc/mecabrc
 
