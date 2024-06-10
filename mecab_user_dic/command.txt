@@ -1,0 +1,43 @@
+## ================================== ##
+## install for Mac
+
+# brew install mecab
+
+## ================================== ##
+# -- 辞書の場所
+# /usr/local/bin/mecab
+
+# -- Default の辞書の変更
+#vi /usr/local/etc/mecabrc
+# dicdir  を書き換える
+#
+## ================================== ##
+# -- ユーザー辞書
+mkdir /usr/local/lib/mecab/dic/user_dic
+
+cd ....
+/usr/local/libexec/mecab/mecab-dict-index -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd -u user_dic.dic -f utf8 -t utf8 mydic.csv 
+cp user_dic.dic /usr/local/lib/mecab/dic/user_dic
+
+## ================================== ##
+
+#nkf --overwrite -Ew mecab-ipadic-2.7.0-20070801.model
+  
+# nkf --overwrite -Ew ./*
+ 
+ #vi /usr/local/etc/mecabrc
+#sudo cp   /usr/local/etc/mecabrc /usr/local/etc/ 
+
+/usr/local/Cellar/mecab/0.996/libexec/mecab/mecab-dict-index -dmecab-ipadic-2.7.0-20070801 -u user_dic.dic  -f utf8 -t utf8 mydic.csv 
+/usr/local/Cellar/mecab/0.996/libexec/mecab/mecab-dict-index -dmecab-ipadic-2.7.0-20070801 -u user_dic2.dic  -f utf8 -t utf8 mydic2.csv 
+
+ 
+ /usr/local/libexec/mecab/mecab-dict-index -d/usr/local/lib/mecab/dic/mecab-ipadic-neologd -u user_dic.dic -f utf8 -t utf8 mydic.csv 
+ /usr/local/libexec/mecab/mecab-dict-index -d/usr/local/lib/mecab/dic/mecab-ipadic-neologd -u user_dic2.dic -f utf8 -t utf8 mydic2.csv 
+
+# /usr/local/libexec/mecab/mecab-dict-index -f utf8 -t utf8 mydic2.csv 
+ 
+
+echo "userdic = /Users/hiroakifujita/Desktop/学会、研究会/2303xx_生態学会69/R/mecab_user_dic/user_dic.dic" >> /usr/local/etc/mecabrc
+echo "userdic = /Users/hiroakifujita/Desktop/学会、研究会/2303xx_生態学会69/R/mecab_user_dic/user_dic2.dic" >> /usr/local/etc/mecabrc
+
