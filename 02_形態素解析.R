@@ -44,3 +44,4 @@ docmat <- t(as(docMatrix_res,"matrix"))
 saveRDS(docmat, sprintf('%s/docMatrix_result.rds', dir$rdsdir))
 
 ## ||||||||||||||||||||||||||||||||||||||||| ##
+
