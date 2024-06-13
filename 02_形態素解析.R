@@ -43,5 +43,7 @@ docMatrix_res <- docMatrix("01_output/Table", pos = c("サ変","名詞"),
 docmat <- t(as(docMatrix_res,"matrix"))
 saveRDS(docmat, sprintf('%s/docMatrix_result.rds', dir$rdsdir))
 
+write.table(colnames(docmat), sprintf('%s/words.txt', dir$tabledir),
+            quote=FALSE, row.names = FALSE)
 ## ||||||||||||||||||||||||||||||||||||||||| ##
 

@@ -17,7 +17,7 @@ ngram_list <- readRDS("02_output/RDS/ngram_result.rds")
 
 ## ||||||||||||||||||||||||||||||||||||||||| ##
 
-for(l in 1:length(word_freq_list)) {   
+for(l in 1:length(ngram_list)) {   
 
     ## ||||||||||||||||||||||||||||||||||||||||| ##
     ## -- ファイルの読み込み    
@@ -28,6 +28,7 @@ for(l in 1:length(word_freq_list)) {
     
     ## ||||||||||||||||||||||||||||||||||||||||| ##
     ## -- グラフオブジェクトの作成
+    ngramsub = ngramsub[ngramsub[,1]=='性' | ngramsub[,2]=='性', ]
     graph <- simplify(graph.data.frame(ngramsub, directed = FALSE))
     mem <- components(graph)
     mem2 <- mem$membership[mem$membership==which.max(mem$csize)]
@@ -45,14 +46,14 @@ for(l in 1:length(word_freq_list)) {
     gnet2 <- ggnetwork(graphsub, layout=as.matrix(lay))
     g <- ggplot(gnet2, aes(x=x, y=y, xend=xend, yend=yend))+
         geom_edges(color='skyblue')+
-        geom_text(aes(label=name), family = "Meiryo UI",
+        geom_text(aes(label=name),# family = "Meiryo UI",
                   size=3)+
         theme_void()+
         scale_color_manual(values=palettes(x=length(table(V(graphsub)$member)),
                                            pal = 'rainbow'))
     
     ggsave(sprintf('%s/graphsub_%s.pdf', dir$figdir, year), w=18, h=18, units = 'cm',
-           plot=g, device=cairo_pdf)
+           plot=g, family='Japan1')
     ## ||||||||||||||||||||||||||||||||||||||||| ##
     
     #dev.off()

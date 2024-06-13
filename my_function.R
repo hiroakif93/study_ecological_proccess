@@ -1,20 +1,18 @@
 
 make_ggPCAobj = function(pcobj,
+                        topn = NULL,
                      choices = 1:2,
                      scale = 1,
                      pc.biplot = TRUE,
                      obs.scale = 1 - scale,
                      var.scale = scale,
-                     groups = NULL,
                      ellipse = FALSE,
                      ellipse.prob = 0.68,
                      labels = NULL,
-                     labels.size = 3,
                      alpha = 1,
                      var.axes = TRUE,
                      circle = FALSE,
                      circle.prob = 0.69,
-                     varname.size = 2,
                      varname.adjust = 1.5,
                      varname.abbrev = FALSE){
   
@@ -27,15 +25,17 @@ make_ggPCAobj = function(pcobj,
   
   stopifnot(length(choices) == 2)
   
-  topn = 10
   if (inherits(pcobj, "prcomp")) {
     nobs.factor <- sqrt(nrow(pcobj$x) - 1)
     d <- pcobj$sdev
     u <- sweep(pcobj$x, 2, 1/(d * nobs.factor), FUN = "*")
     v <- pcobj$rotation
-    top5 = \(x) c(order(x)[1:topn], order(x, decreasing = TRUE)[1:topn])
-    rowid = apply(v[,1:2], 2, top5) |> as.vector() |> unique()
-    v = v[rowid,]
+    
+    if(!is.null(topn)){
+      top5 = \(x) c(order(x)[1:topn], order(x, decreasing = TRUE)[1:topn])
+      rowid = apply(v[,1:2], 2, top5) |> as.vector() |> unique()
+      v = v[rowid,]
+    }
     
   }
   
@@ -75,23 +75,31 @@ make_ggPCAobj = function(pcobj,
 }
 
 
-my_biplot = function(df.u, df.v,
+my_biplot = function(df.u, df.v, label_col="var_name" ,arrow.size=1,
                      text.color='darkred',
                      segment.size=0.1,
-                     segment.linetype=3){
-  
+                     segment.linetype=3, varname.size = 2,
+                     labels.size = 3,
+                     groups = NULL){
+  library(ggplot2)
+  library(plyr)
+  library(scales)
+  library(grid)
+  library(purrr)
+  library(ggrepel)
   g <- ggplot(data = df.u, aes(x = xvar, y = yvar)) + 
     xlab('PC1') + 
-    ylab('PC2') + coord_equal()
+    ylab('PC2') 
   g <- g + geom_segment(data = df.v, 
-                        aes(x = 0, y = 0,
+                        aes(x = 0, y = 0, 
                             xend = xvar, yend = yvar), 
+                        size = arrow.size,
                         arrow = arrow(length = unit(1/2,"picas")), color = muted("red"))+ 
     geom_line(linetype=3)+
     geom_text(aes(label = labels, color = groups), size = labels.size)
   
   g = (g + 
-         geom_text_repel(data = df.v, aes(label = varname, 
+         geom_text_repel(data = df.v, aes(label = !!ensym(label_col), 
                                           x = xvar+0.01, y = yvar+0.01, angle = angle, hjust = hjust), 
                          color = text.color, size = varname.size, 
                          segment.size=segment.size, segment.linetype=segment.linetype,
@@ -100,4 +108,37 @@ my_biplot = function(df.u, df.v,
                          bg.r = 0.1) +
          theme_bw(base_family = 'sans')
   )
+  return(g)
+}
+
+my_biplot_all = function(df.u, df.v, label_col="var_name" ,arrow.size=1,
+                         text.color='darkred',
+                         segment.size=0.1,
+                         segment.linetype=3, varname.size = 2,
+                         labels.size = 3,
+                         groups = NULL){
+  library(ggplot2)
+  library(plyr)
+  library(scales)
+  library(grid)
+  library(purrr)
+  library(ggrepel)
+  g <- ggplot(data = df.u, aes(x = xvar, y = yvar)) + 
+    xlab('PC1') + 
+    ylab('PC2') 
+  g <- g + geom_segment(data = df.v, 
+                        aes(x = 0, y = 0, 
+                            xend = xvar, yend = yvar), 
+                        size = arrow.size,
+                        arrow = arrow(length = unit(1/2,"picas")), color = muted("red"))+ 
+    geom_line(linetype=3)+
+    geom_text(aes(label = labels, color = groups), size = labels.size)
+  
+  g = (g + 
+         geom_text(data = df.v, aes(label = !!ensym(label_col), 
+                                          x = xvar+0.01, y = yvar+0.01, angle = angle, hjust = hjust), 
+                         color = text.color, size = varname.size) +
+         theme_bw(base_family = 'sans')
+  )
+  return(g)
 }
